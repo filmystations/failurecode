@@ -1,732 +1,988 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Failure Code: Interactive Guide</title>
-<!-- Chosen Palette: Monochrome Fury (Off-white #f8f7f2, Charcoal #2C3A47, Deep Red Accent #A40E4C) -->
-<!-- Application Structure Plan: A non-linear, interactive dashboard structure. Main sections: 'The Code' (intro/viz), 'The Arsenal' (interactive tabs for Failure/Rage/Resistance, plus an LLM-powered "Weaponize Your Problem" lab), 'The Playbook' (tactics/case studies, plus an LLM-powered "Tactical Insight Generator"), 'The Mindset' (resilience/legacy), and a new 'The Failure Flywheel' (detailed concepts, plus an LLM-powered "Image-Based Solution Generator"). This structure prioritizes user exploration of core concepts over a linear book-like progression, enhancing engagement and making the framework more accessible. -->
-<!-- Visualization & Content Choices: 1. Main Viz: Radar Chart (Chart.js/Canvas) to show the interconnected core tenets (Failure, Rage, Resistance, Mindset, Tactics). Goal: Organize/Inform. Interaction: Clickable labels to navigate. 2. Diagrams: HTML/CSS Flexbox/Grid for process flows (e.g., 'Blueprinting the Bounce-Back'). Goal: Organize. Interaction: Hover highlights on steps. 3. Content Presentation: JS-powered dynamic tabs and accordions for chapter details. Goal: Inform/Organize. Interaction: Click to reveal. 4. LLM Integration (Arsenal): Text input and button to call Gemini API for text generation based on user's problem. Goal: Engage/Personalize. Interaction: User input, button click, AI response display. 5. LLM Integration (Playbook): Text input and button to call Gemini API for tactical insight generation. Goal: Engage/Personalize/Apply. Interaction: User input, button click, AI response display. 6. LLM Integration (Flywheel): Text input and button to call Gemini Image API (Imagen-3.0) for symbolic image generation representing solutions. Goal: Visualize/Personalize/Engage. Interaction: User input, button click, AI image display. NO SVG/Mermaid used. -->
-<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-body {
-font-family: 'Inter', sans-serif;
-background-color: #f8f7f2;
-color: #2C3A47;
-}
-.accent-color { color: #A40E4C; }
-.accent-bg { background-color: #A40E4C; }
-.secondary-bg { background-color: #ffffff; }
-.chart-container {
-position: relative;
-width: 100%;
-max-width: 600px;
-margin-left: auto;
-margin-right: auto;
-height: 300px;
-max-height: 400px;
-}
-@media (min-width: 768px) {
-.chart-container {
-height: 400px;
-max-height: 500px;
-}
-}
-.nav-link {
-transition: color 0.3s ease, border-bottom-color 0.3s ease;
-border-bottom: 2px solid transparent;
-}
-.nav-link:hover, .nav-link.active {
-color: #A40E4C;
-border-bottom-color: #A40E4C;
-}
-.tab-button {
-transition: background-color 0.3s ease, color 0.3s ease;
-}
-.tab-button.active {
-background-color: #A40E4C;
-color: #f8f7f2;
-}
-.accordion-content {
-max-height: 0;
-overflow: hidden;
-transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
-}
-.loading-spinner {
-border: 4px solid rgba(0, 0, 0, 0.1);
-border-left-color: #A40E4C;
-border-radius: 50%;
-width: 24px;
-height: 24px;
-animation: spin 1s linear infinite;
-}
-@keyframes spin {
-to { transform: rotate(360deg); }
-}
-.image-solution-container {
-max-width: 500px;
-margin: 20px auto;
-background-color: #f0f0f0;
-border: 1px solid #ddd;
-border-radius: 8px;
-overflow: hidden;
-box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-display: flex;
-align-items: center;
-justify-content: center;
-min-height: 200px;
-}
-.image-solution-container img {
-width: 100%;
-height: auto;
-display: block;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Failure Code: Interactive Guide</title>
+    <!-- Chosen Palette: Monochrome Fury (Off-white #f8f7f2, Charcoal #2C3A47, Deep Red Accent #A40E4C) -->
+    <!-- Application Structure Plan: A non-linear, interactive dashboard structure. Main sections: 'The Code' (intro/viz), 'The Arsenal' (interactive tabs for Failure/Rage/Resistance, plus an LLM-powered "Weaponize Your Problem" lab), 'The Playbook' (tactics/case studies, plus an LLM-powered "Tactical Insight Generator"), 'The Mindset' (resilience/legacy), and a new 'The Failure Flywheel' (detailed concepts, plus an LLM-powered "Strategic Mind Map Generator"). This structure prioritizes user exploration of core concepts over a linear book-like progression, enhancing engagement and making the framework more accessible. -->
+    <!-- Visualization & Content Choices: 1. Main Viz: Radar Chart (Chart.js/Canvas) to show the interconnected core tenets (Failure, Rage, Resistance, Mindset, Tactics). Goal: Organize/Inform. Interaction: Clickable labels to navigate. 2. Diagrams: HTML/CSS Flexbox/Grid for process flows (e.g., 'Blueprinting the Bounce-Back'). Goal: Organize. Interaction: Hover highlights on steps. 3. Content Presentation: JS-powered dynamic tabs and accordions for chapter details. Goal: Inform/Organize. Interaction: Click to reveal. 4. LLM Integration (Arsenal): Text input and button to call Gemini API for text generation based on user's problem. Goal: Engage/Personalize. Interaction: User input, button click, AI response display. Output formatting improved for readability and line breaks. 5. LLM Integration (Playbook): Text input and button to call Gemini API for tactical insight generation. Goal: Engage/Personalize/Apply. Interaction: User input, button click, AI response display. 6. LLM Integration (Flywheel): Text input and button to call Gemini API (gemini-2.0-flash) for structured textual mind map generation representing solutions and strategies based on the Failure Flywheel. The output is formatted with ASCII art characters and indentation to mimic a tree structure. Goal: Organize/Strategize/Personalize. Interaction: User input, button click, AI-generated structured text display. NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Updated Font: Electrolize for a techy feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Electrolize&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Electrolize', sans-serif; /* Changed font to Electrolize */
+            background-color: #f8f7f2;
+            color: #1A202C; /* Changed primary text color to a darker, techier gray */
+        }
+        .accent-color { color: #A40E4C; }
+        .accent-bg { background-color: #A40E4C; }
+        .secondary-bg { background-color: #ffffff; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+                max-height: 500px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #A40E4C;
+            border-bottom-color: #A40E4C;
+        }
+        .tab-button {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .tab-button.active {
+            background-color: #A40E4C;
+            color: #f8f7f2;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #A40E4C;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .mind-map-output, .weaponize-output pre { /* Apply pre-wrap to both for consistency */
+            background-color: #fcfcfc; /* Lighter background for the mind map area */
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            white-space: pre-wrap; /* Preserves whitespace and line breaks */
+            font-family: 'monospace'; /* Use monospace for consistent spacing for ASCII art */
+            line-height: 1.6;
+            font-size: 0.9rem; /* Slightly smaller font for more compact tree */
+            color: #1A202C; /* Ensure consistent text color in output blocks */
+            text-align: left; /* Ensure text aligns left */
+            overflow-x: auto; /* Allow horizontal scrolling if lines are too long */
+            word-wrap: break-word; /* Break long words */
+        }
+        .mind-map-output h4, .weaponize-output h4 {
+            color: #A40E4C; /* Accent color for the heading */
+            margin-bottom: 0.75rem;
+        }
+        /* Custom styling for the logo and title */
+        .header-title {
+            display: flex;
+            align-items: center;
+            font-size: 1.75rem; /* Equivalent to text-3xl */
+            font-weight: 800; /* Extra bold */
+            color: #1A202C; /* Updated to match new primary text color */
+            letter-spacing: -0.025em; /* Tighten letter spacing slightly */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Subtle shadow */
+        }
+        .header-title-logo {
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); /* Subtle shadow for the logo */
+        }
+        @media (min-width: 768px) {
+            .header-title {
+                font-size: 2.25rem; /* Equivalent to text-4xl */
+            }
+        }
+        /* Responsive iframe for videos */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 0.5rem; /* Tailwind rounded-md */
+        }
+        .course-buy-button {
+            background-color: #2C3A47; /* Charcoal button background */
+            color: #f8f7f2; /* Off-white text */
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; /* rounded-md */
+            font-weight: 600; /* font-semibold */
+            transition: background-color 0.3s ease;
+            display: inline-block; /* Allows padding and margin */
+            margin-top: 1rem;
+        }
+        .course-buy-button:hover {
+            background-color: #A40E4C; /* Deep Red accent on hover */
+        }
+    </style>
 </head>
 <body class="antialiased">
 
-<!-- Header & Navigation -->
-<header class="secondary-bg sticky top-0 z-50 shadow-md">
-<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-<a href="#home" class="text-xl md:text-2xl font-bold accent-color">THE FAILURE CODE</a>
-<div class="hidden md:flex space-x-8">
-<a href="#home" class="nav-link font-semibold py-2">The Code</a>
-<a href="#arsenal" class="nav-link font-semibold py-2">The Arsenal</a>
-<a href="#playbook" class="nav-link font-semibold py-2">The Playbook</a>
-<a href="#mindset" class="nav-link font-semibold py-2">The Mindset</a>
-<a href="#flywheel" class="nav-link font-semibold py-2">The Flywheel</a>
-</div>
-<div class="md:hidden">
-<button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
-<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-</button>
-</div>
-</nav>
-<div id="mobile-menu" class="hidden md:hidden">
-<a href="#home" class="block py-2 px-6 text-sm hover:bg-gray-200">The Code</a>
-<a href="#arsenal" class="block py-2 px-6 text-sm hover:bg-gray-200">The Arsenal</a>
-<a href="#playbook" class="block py-2 px-6 text-sm hover:bg-gray-200">The Playbook</a>
-<a href="#mindset" class="block py-2 px-6 text-sm hover:bg-gray-200">The Mindset</a>
-<a href="#flywheel" class="block py-2 px-6 text-sm hover:bg-gray-200">The Flywheel</a>
-</div>
-</header>
+    <!-- Header & Navigation -->
+    <header class="secondary-bg sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#home" class="header-title">
+                <!--
+                    TO DISPLAY YOUR LOGO:
+                    Replace "https://picsum.photos/40/40" with the *direct public URL* of your logo image.
+                    A direct public URL typically ends in .png, .jpg, or .svg.
+                    It should NOT be a link to a webpage that displays the image (like an Imgur album page).
 
-<main>
-<!-- Section 1: The Code -->
-<section id="home" class="py-16 md:py-24">
-<div class="container mx-auto px-6 text-center">
-<h1 class="text-4xl md:text-6xl font-bold mb-4">The Failure Code</h1>
-<p class="text-lg md:text-xl max-w-3xl mx-auto mb-12">An interactive guide to weaponizing failure, rage, and resistance to win. This framework is not about avoiding setbacks, but about decoding them to extract unstoppable fuel for your journey.</p>
-<div class="chart-container">
-<canvas id="failureCodeRadar"></canvas>
-</div>
-<p class="mt-8 text-gray-500 text-sm">Click the labels on the chart to explore the core principles.</p>
-</div>
-</section>
+                    Example: <img src="https://yourdomain.com/your-logo.png" alt="Your Logo" ... >
+                -->
+                <img src="https://picsum.photos/40/40" alt="Failure Code Logo" class="h-8 md:h-10 w-auto mr-2 rounded-md header-title-logo">
+            </a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="nav-link font-semibold py-2">The Code</a>
+                <a href="#arsenal" class="nav-link font-semibold py-2">The Arsenal</a>
+                <a href="#playbook" class="nav-link font-semibold py-2">The Playbook</a>
+                <a href="#mindset" class="nav-link font-semibold py-2">The Mindset</a>
+                <a href="#flywheel" class="nav-link font-semibold py-2">The Flywheel</a>
+                <a href="#courses" class="nav-link font-semibold py-2">Courses</a> <!-- New Course Link -->
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#home" class="block py-2 px-6 text-sm hover:bg-gray-200">The Code</a>
+            <a href="#arsenal" class="block py-2 px-6 text-sm hover:bg-gray-200">The Arsenal</a>
+            <a href="#playbook" class="block py-2 px-6 text-sm hover:bg-gray-200">The Playbook</a>
+            <a href="#mindset" class="block py-2 px-6 text-sm hover:bg-gray-200">The Mindset</a>
+            <a href="#flywheel" class="block py-2 px-6 text-sm hover:bg-gray-200">The Flywheel</a>
+            <a href="#courses" class="block py-2 px-6 text-sm hover:bg-gray-200">Courses</a> <!-- New Course Link -->
+        </div>
+    </header>
 
-<!-- Section 2: The Arsenal -->
-<section id="arsenal" class="py-16 md:py-24 secondary-bg">
-<div class="container mx-auto px-6">
-<div class="text-center mb-12">
-<h2 class="text-3xl md:text-4xl font-bold">Your Arsenal</h2>
-<p class="mt-4 max-w-2xl mx-auto text-gray-600">This section details the three core elements you will learn to weaponize. Each is a powerful tool when understood and channeled correctly. Select a weapon to examine its components and strategies.</p>
-</div>
-<div class="flex justify-center mb-8">
-<div class="flex space-x-2 border border-gray-300 rounded-full p-1">
-<button id="tab-failure" class="tab-button px-4 py-2 text-sm md:px-6 md:py-2 font-semibold rounded-full">Failure</button>
-<button id="tab-rage" class="tab-button px-4 py-2 text-sm md:px-6 md:py-2 font-semibold rounded-full">Rage</button>
-<button id="tab-resistance" class="tab-button px-4 py-2 text-sm md:px-6 md:py-2 font-semibold rounded-full">Resistance</button>
-</div>
-</div>
-<div id="arsenal-content" class="max-w-4xl mx-auto">
-<!-- Content will be dynamically inserted here -->
-</div>
+    <main>
+        <!-- Section 1: The Code -->
+        <section id="home" class="py-16 md:py-24">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-4">The Failure Code</h1>
+                <p class="text-lg md:text-xl max-w-3xl mx-auto mb-12">An interactive guide to weaponizing failure, rage, and resistance to win. This framework is not about avoiding setbacks, but about decoding them to extract unstoppable fuel for your journey.</p>
+                <!-- Image for The Code concept: Replaced with a placeholder.
+                     If you have a public URL for "FAILURE CODE LOGO (1).jpg", replace the src below! -->
+                <img src="https://i.postimg.cc/KvwR3j9y/FAILURE-CODE-LOGO-1.png" alt="Decoding Failure Concept" class="w-full max-w-xl mx-auto rounded-md shadow-lg mb-8">
+                <div class="chart-container">
+                    <canvas id="failureCodeRadar"></canvas>
+                </div>
+                <p class="mt-8 text-gray-500 text-sm">Click the labels on the chart to explore the core principles.</p>
+            </div>
+        </section>
 
-<!-- LLM Integration: Weaponize Your Problem Lab -->
-<div class="max-w-4xl mx-auto mt-16 p-6 secondary-bg rounded-lg shadow-xl border border-gray-200">
-<h3 class="font-bold text-xl md:text-2xl mb-4 accent-color text-center">Weaponize Your Problem ✨</h3>
-<p class="mb-4 text-gray-700 text-center">Describe a specific failure, rage-inducing situation, or resistance you're facing. The AI will suggest how to weaponize it according to "The Failure Code" principles.</p>
-<textarea id="problem-input" class="w-full p-3 border border-gray-300 rounded-md focus:ring-accent-color focus:border-accent-color resize-y min-h-[100px]" placeholder="E.g., 'My last business venture failed badly after two years.' or 'I feel immense frustration when my ideas are constantly resisted by management.'"></textarea>
-<button id="weaponize-button" class="mt-4 w-full accent-bg text-f8f7f2 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center justify-center">
-<span id="weaponize-text">Weaponize It!</span>
-<div id="weaponize-loading" class="loading-spinner hidden ml-3"></div>
-</button>
-<div id="weaponize-output" class="mt-6 p-4 bg-gray-50 rounded-md border border-gray-200 text-gray-800 hidden">
-<h4 class="font-bold mb-2">AI's Strategy:</h4>
-<p id="ai-response-text"></p>
-</div>
-</div>
-</div>
-</section>
+        <!-- Section 2: The Arsenal -->
+        <section id="arsenal" class="py-16 md:py-24 secondary-bg">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold">Your Arsenal</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-gray-600">This section details the three core elements you will learn to weaponize. Each is a powerful tool when understood and channeled correctly. Select a weapon to examine its components and strategies.</p>
+                    <!-- General Image for The Arsenal -->
+                    <img src="https://placehold.co/800x200/A40E4C/F8F7F2?text=THE+ARSENAL" alt="Arsenal Concept" class="w-full max-w-3xl mx-auto rounded-md shadow-lg mt-8 mb-8">
+                </div>
+                <div class="flex justify-center mb-8">
+                    <div class="flex space-x-2 border border-gray-300 rounded-full p-1">
+                        <button id="tab-failure" class="tab-button px-4 py-2 text-sm md:px-6 md:py-2 font-semibold rounded-full">Failure</button>
+                        <button id="tab-rage" class="tab-button px-4 py-2 text-sm md:px-6 md:py-2 font-semibold rounded-full">Rage</button>
+                        <button id="tab-resistance" class="tab-button px-4 py-2 text-sm md:px-6 md:py-2 font-semibold rounded-full">Resistance</button>
+                    </div>
+                </div>
+                <div id="arsenal-content" class="max-w-4xl mx-auto">
+                    <!-- Content will be dynamically inserted here -->
+                </div>
 
-<!-- Section 3: The Playbook -->
-<section id="playbook" class="py-16 md:py-24">
-<div class="container mx-auto px-6">
-<div class="text-center mb-12">
-<h2 class="text-3xl md:text-4xl font-bold">The Playbook</h2>
-<p class="mt-4 max-w-2xl mx-auto text-gray-600">Theory is nothing without application. The Playbook contains actionable tactics and advanced strategies to deploy The Failure Code in real-world scenarios, from personal challenges to organizational leadership.</p>
-</div>
-<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-<!-- Cards will be dynamically inserted here -->
-</div>
+                <!-- LLM Integration: Weaponize Your Problem Lab -->
+                <div class="max-w-4xl mx-auto mt-16 p-6 secondary-bg rounded-lg shadow-xl border border-gray-200">
+                    <h3 class="font-bold text-xl md:text-2xl mb-4 accent-color text-center">Weaponize Your Problem ✨</h3>
+                    <p class="mb-4 text-gray-700 text-center">Describe a specific failure, rage-inducing situation, or resistance you're facing. The AI will suggest how to weaponize it according to "The Failure Code" principles.</p>
+                    <textarea id="problem-input" class="w-full p-3 border border-gray-300 rounded-md focus:ring-accent-color focus:border-accent-color resize-y min-h-[100px]" placeholder="E.g., 'My last business venture failed badly after two years.' or 'I feel immense frustration when my ideas are constantly resisted by management.'"></textarea>
+                    <button id="weaponize-button" class="mt-4 w-full accent-bg text-f8f7f2 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center justify-center">
+                        <span id="weaponize-text">Weaponize It!</span>
+                        <div id="weaponize-loading" class="loading-spinner hidden ml-3"></div>
+                    </button>
+                    <div id="weaponize-output" class="mt-6 p-4 bg-gray-50 rounded-md border border-gray-200 text-gray-800 hidden weaponize-output">
+                        <h4 class="font-bold mb-2">AI's Strategy:</h4>
+                        <pre id="ai-response-text" class="text-sm"></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<!-- LLM Integration: Tactical Insight Generator -->
-<div class="max-w-4xl mx-auto mt-16 p-6 secondary-bg rounded-lg shadow-xl border border-gray-200">
-<h3 class="font-bold text-xl md:text-2xl mb-4 accent-color text-center">Generate Tactical Insight ✨</h3>
-<p class="mb-4 text-gray-700 text-center">Describe a specific challenge or goal you are facing. The AI will provide a tactical insight based on "The Failure Code" principles to help you navigate it.</p>
-<textarea id="tactical-challenge-input" class="w-full p-3 border border-gray-300 rounded-md focus:ring-accent-color focus:border-accent-color resize-y min-h-[100px]" placeholder="E.g., 'I need to launch a new product in a highly competitive market.' or 'How can I motivate a disengaged team?'"></textarea>
-<button id="generate-insight-button" class="mt-4 w-full accent-bg text-f8f7f2 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center justify-center">
-<span id="insight-text">Generate Insight!</span>
-<div id="insight-loading" class="loading-spinner hidden ml-3"></div>
-</button>
-<div id="insight-output" class="mt-6 p-4 bg-gray-50 rounded-md border border-gray-200 text-gray-800 hidden">
-<h4 class="font-bold mb-2">AI's Tactical Insight:</h4>
-<p id="ai-insight-text"></p>
-</div>
-</div>
-</div>
-</section>
+        <!-- Section 3: The Playbook -->
+        <section id="playbook" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold">The Playbook</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-gray-600">Theory is nothing without application. The Playbook contains actionable tactics and advanced strategies to deploy The Failure Code in real-world scenarios, from personal challenges to organizational leadership.</p>
+                    <!-- Image for The Playbook concept -->
+                    <img src="https://placehold.co/800x400/2C3A47/F8F7F2?text=TACTICAL+STRATEGY" alt="Tactical Strategy Concept" class="w-full max-w-3xl mx-auto rounded-md shadow-lg mt-8 mb-8">
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Cards will be dynamically inserted here -->
+                </div>
 
-<!-- Section 4: The Mindset -->
-<section id="mindset" class="py-16 md:py-24 secondary-bg">
-<div class="container mx-auto px-6">
-<div class="text-center mb-12">
-<h2 class="text-3xl md:text-4xl font-bold">The Mindset & Legacy</h2>
-<p class="mt-4 max-w-2xl mx-auto text-gray-600">The ultimate victory lies in forging an unbreakable internal state. This section explores the psychology of resilience and how to build a lasting legacy that inspires others and transcends individual battles.</p>
-</div>
-<div class="max-w-4xl mx-auto space-y-8">
-<!-- Mindset content will be dynamically inserted here -->
-</div>
-</div>
-</section>
+                <!-- LLM Integration: Tactical Insight Generator -->
+                <div class="max-w-4xl mx-auto mt-16 p-6 secondary-bg rounded-lg shadow-xl border border-gray-200">
+                    <h3 class="font-bold text-xl md:text-2xl mb-4 accent-color text-center">Generate Tactical Insight ✨</h3>
+                    <p class="mb-4 text-gray-700 text-center">Describe a specific challenge or goal you are facing. The AI will provide a tactical insight based on "The Failure Code" principles to help you navigate it.</p>
+                    <textarea id="tactical-challenge-input" class="w-full p-3 border border-gray-300 rounded-md focus:ring-accent-color focus:border-accent-color resize-y min-h-[100px]" placeholder="E.g., 'I need to launch a new product in a highly competitive market.' or 'How can I motivate a disengaged team?'"></textarea>
+                    <button id="generate-insight-button" class="mt-4 w-full accent-bg text-f8f7f2 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center justify-center">
+                        <span id="insight-text">Generate Insight!</span>
+                        <div id="insight-loading" class="loading-spinner hidden ml-3"></div>
+                    </button>
+                    <div id="insight-output" class="mt-6 p-4 bg-gray-50 rounded-md border border-gray-200 text-gray-800 hidden">
+                        <h4 class="font-bold mb-2">AI's Tactical Insight:</h4>
+                        <p id="ai-insight-text"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<!-- Section 5: The Failure Flywheel -->
-<section id="flywheel" class="py-16 md:py-24">
-<div class="container mx-auto px-6">
-<div class="text-center mb-12">
-<h2 class="text-3xl md:text-4xl font-bold">The Failure Flywheel™</h2>
-<p class="mt-4 max-w-2xl mx-auto text-gray-600">Momentum built from breakdowns is 10x more sustainable than momentum built from hype. This section introduces the core engine for continuous evolution.</p>
-</div>
+        <!-- Section 4: The Mindset -->
+        <section id="mindset" class="py-16 md:py-24 secondary-bg">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold">The Mindset & Legacy</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-gray-600">The ultimate victory lies in forging an unbreakable internal state. This section explores the psychology of resilience and how to build a lasting legacy that inspires others and transcends individual battles.</p>
+                    <!-- Image for The Mindset concept -->
+                    <img src="https://placehold.co/800x400/2C3A47/F8F7F2?text=RESILIENT+MINDSET" alt="Resilient Mindset Concept" class="w-full max-w-3xl mx-auto rounded-md shadow-lg mt-8 mb-8">
+                </div>
+                <div class="max-w-4xl mx-auto space-y-8">
+                    <!-- Mindset content will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
 
-<div class="max-w-4xl mx-auto space-y-8">
-<!-- Architecture of the Flywheel -->
-<div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
-<h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">Part V, Chapter 1: The Architecture of the Flywheel</h3>
-<p class="mb-4 text-gray-700">Understanding a flywheel: a mechanical system that builds power through rotation, not spikes. Why failure is the most powerful "torque" if harnessed right. The difference between the Failure Flywheel™ vs. a Success Ladder (which breaks under too much pressure).</p>
-<h4 class="font-bold text-lg mb-2">Components:</h4>
-<ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
-<li>**Fall** – The triggering event (failure, rejection, betrayal)</li>
-<li>**Feel** – The emotional registration and awareness</li>
-<li>**Frame** – The reframing and analysis stage</li>
-<li>**Fuel** – The rage, revenge, or redemptive force</li>
-<li>**Forge** – The action taken using new data</li>
-<li>**Fly** – The visible breakthrough or new identity version</li>
-<li>**Feedback** – What you learn from the outcome, to trigger the next loop</li>
-</ul>
-<p class="mt-4 font-bold text-gray-700">Momentum Quotient (MQ) = (Emotional Processing Speed + Action Speed) / Resistance to Restart</p>
-</div>
+        <!-- New Section: Courses -->
+        <section id="courses" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold">The Failure Code Courses</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-gray-600">Deep dive into The Failure Code principles with structured learning modules. Choose a course to begin your journey of weaponizing adversity.</p>
+                    <!-- Image for The Courses concept -->
+                    <img src="https://placehold.co/800x400/A40E4C/F8F7F2?text=FAILURE+COURSES" alt="Failure Courses Concept" class="w-full max-w-3xl mx-auto rounded-md shadow-lg mt-8 mb-8">
+                </div>
+                <div id="courses-content" class="max-w-4xl mx-auto space-y-8">
+                    <!-- Course content will be dynamically inserted here by JavaScript -->
+                </div>
+            </div>
+        </section>
 
-<!-- How to Build Your First Flywheel -->
-<div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
-<h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">Part V, Chapter 2: How to Build Your First Flywheel</h3>
-<p class="mb-4 text-gray-700">The Self-Diagnostic: Where are you stuck? Most people stop at "FEEL" and get frozen in victimhood or drama. Breakthrough method: "Jump to FORGE, not to Fear."</p>
-<h4 class="font-bold text-lg mb-2">Tools:</h4>
-<ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
-<li>Failure Flywheel Worksheet: Fill-in-the-blanks for a recent failure</li>
-<li>Emotional Debrief Grid</li>
-<li>Timeline the failure → action taken → what worked → what needs recalibration</li>
-</ul>
-<p class="mt-4 text-gray-700 font-bold">Real Case Study:</p>
-<p class="text-gray-600">Serena Williams' Loss in 2018 US Open — public meltdown → rebirth in motherhood → brand and social advocacy power. Serena moved quickly from FEEL to FUEL and built momentum not just in tennis, but in impact.</p>
-</div>
+        <!-- Section 5: The Failure Flywheel -->
+        <section id="flywheel" class="py-16 md:py-24 secondary-bg">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold">The Failure Flywheel™</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-gray-600">Momentum built from breakdowns is 10x more sustainable than momentum built from hype. This section introduces the core engine for continuous evolution.</p>
+                    <!-- Image for The Failure Flywheel concept -->
+                    <img src="https://placehold.co/800x400/2C3A47/F8F7F2?text=THE+FLYWHEEL" alt="Failure Flywheel Concept" class="w-full max-w-3xl mx-auto rounded-md shadow-lg mt-8 mb-8">
+                </div>
 
-<!-- Multiple Flywheels of Your Life -->
-<div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
-<h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">Part V, Chapter 3: The Multiple Flywheels of Your Life</h3>
-<p class="mb-4 text-gray-700">You don't need one giant life-turnaround. You need 5 small spinning flywheels: Career, Health, Finances, Relationships, Identity/Legacy. Why progress in one fuels the others. How to avoid burnout by cycling through “Mini-Fails” in each area.</p>
-<h4 class="font-bold text-lg mb-2">Tools:</h4>
-<ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
-<li>The Flywheel Calendar: Plan one failure per week in a micro area to build tolerance</li>
-<li>Momentum Bridge Tool: How to carry energy from a personal breakthrough into business</li>
-</ul>
-<p class="mt-4 text-gray-700 font-bold">Real Case Study:</p>
-<p class="text-gray-600">Arnold Schwarzenegger — Bodybuilding → acting rejection → governor scandal → comeback. Each failure reset a different wheel — but none broke the core engine.</p>
-</div>
+                <div class="max-w-4xl mx-auto space-y-8">
+                    <!-- Architecture of the Flywheel -->
+                    <div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
+                        <h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">Part V, Chapter 1: The Architecture of the Flywheel</h3>
+                        <p class="mb-4 text-gray-700">Understanding a flywheel: a mechanical system that builds power through rotation, not spikes. Why failure is the most powerful "torque" if harnessed right. The difference between the Failure Flywheel™ vs. a Success Ladder (which breaks under too much pressure).</p>
+                        <h4 class="font-bold text-lg mb-2">Components:</h4>
+                        <ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
+                            <li>**Fall** – The triggering event (failure, rejection, betrayal)</li>
+                            <li>**Feel** – The emotional registration and awareness</li>
+                            <li>**Frame** – The reframing and analysis stage</li>
+                            <li>**Fuel** – The rage, revenge, or redemptive force</li>
+                            <li>**Forge** – The action taken using new data</li>
+                            <li>**Fly** – The visible breakthrough or new identity version</li>
+                            <li>**Feedback** – What you learn from the outcome, to trigger the next loop</li>
+                        </ul>
+                        <p class="mt-4 font-bold text-gray-700">Momentum Quotient (MQ) = (Emotional Processing Speed + Action Speed) / Resistance to Restart</p>
+                    </div>
 
-<!-- Flywheel Warfare — Using the Enemy Advantage -->
-<div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
-<h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">Part V, Chapter 4: Flywheel Warfare — Using the Enemy Advantage</h3>
-<p class="mb-4 text-gray-700">Your haters and rivals can spin the wheel faster than any friend. Learn to feed your FUEL stage with envy, attack, or challenge. How to make your worst critic fund your best version.</p>
-<h4 class="font-bold text-lg mb-2">Tools:</h4>
-<ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
-<li>Flywheel vs. Feedback Grid: Convert trolling/comments/insults into tactical action points</li>
-<li>Battle Board: Visualize your next 3 flywheel launches and who fuels them</li>
-</ul>
-<p class="mt-4 text-gray-700 font-bold">Real Case Study:</p>
-<p class="text-gray-600">Cristiano Ronaldo — Booed, doubted, insulted at multiple stages. Public humiliation = fastest catalyst for Fuel → Forge → Fly.</p>
-</div>
+                    <!-- How to Build Your First Flywheel -->
+                    <div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
+                        <h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">Part V, Chapter 2: How to Build Your First Flywheel</h3>
+                        <p class="mb-4 text-gray-700">The Self-Diagnostic: Where are you stuck? Most people stop at "FEEL" and get frozen in victimhood or drama. Breakthrough method: "Jump to FORGE, not to Fear."</p>
+                        <h4 class="font-bold text-lg mb-2">Tools:</h4>
+                        <ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
+                            <li>Failure Flywheel Worksheet: Fill-in-the-blanks for a recent failure</li>
+                            <li>Emotional Debrief Grid</li>
+                            <li>Timeline the failure → action taken → what worked → what needs recalibration</li>
+                        </ul>
+                        <p class="mt-4 text-gray-700 font-bold">Real Case Study:</p>
+                        <p class="text-gray-600">Serena Williams' Loss in 2018 US Open — public meltdown → rebirth in motherhood → brand and social advocacy power. Serena moved quickly from FEEL to FUEL and built momentum not just in tennis, but in impact.</p>
+                    </div>
 
-<!-- Becoming a Flywheel Being -->
-<div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
-<h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">Part V, Chapter 5: Becoming a Flywheel Being</h3>
-<p class="mb-4 text-gray-700">No more waiting for big wins. No longer scared of small losses. Living in a loop of eternal action, built from inner thermodynamics.</p>
-<h4 class="font-bold text-lg mb-2">Practices:</h4>
-<ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
-<li>Daily Micro-Fall Logs: Fail something deliberately daily</li>
-<li>Weekly Flywheel Review Rituals (Use Notion, journal, or app)</li>
-<li>Monthly Loop Stack Review — What version of you is emerging?</li>
-</ul>
-<p class="mt-4 font-bold text-gray-700">Identity Evolution Quotient (IEQ) = (Flywheel Completions ÷ Time) × Clarity of Direction</p>
-<p class="mt-4 text-gray-700 font-bold">Real Case Study:</p>
-<p class="text-gray-600">Robert Downey Jr. — From rock bottom (drug arrests) to Iron Man. Each loop made him sharper, more in control of his identity, and finally irreplaceable.</p>
-</div>
+                    <!-- Multiple Flywheels of Your Life -->
+                    <div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
+                        <h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">Part V, Chapter 3: The Multiple Flywheels of Your Life</h3>
+                        <p class="mb-4 text-gray-700">You don't need one giant life-turnaround. You need 5 small spinning flywheels: Career, Health, Finances, Relationships, Identity/Legacy. Why progress in one fuels the others. How to avoid burnout by cycling through “Mini-Fails” in each area.</p>
+                        <h4 class="font-bold text-lg mb-2">Tools:</h4>
+                        <ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
+                            <li>The Flywheel Calendar: Plan one failure per week in a micro area to build tolerance</li>
+                            <li>Momentum Bridge Tool: How to carry energy from a personal breakthrough into business</li>
+                        </ul>
+                        <p class="mt-4 text-gray-700 font-bold">Real Case Study:</p>
+                        <p class="text-gray-600">Arnold Schwarzenegger — Bodybuilding → acting rejection → governor scandal → comeback. Each failure reset a different wheel — but none broke the core engine.</p>
+                    </div>
 
-<p class="mt-8 text-center text-gray-700 font-bold text-lg">"Don’t wait for the wheel of fortune. Build the flywheel of failure. That’s the only engine that never stops evolving you."</p>
-</div>
+                    <!-- Flywheel Warfare — Using the Enemy Advantage -->
+                    <div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
+                        <h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">Part V, Chapter 4: Flywheel Warfare — Using the Enemy Advantage</h3>
+                        <p class="mb-4 text-gray-700">Your haters and rivals can spin the wheel faster than any friend. Learn to feed your FUEL stage with envy, attack, or challenge. How to make your worst critic fund your best version.</p>
+                        <h4 class="font-bold text-lg mb-2">Tools:</h4>
+                        <ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
+                            <li>Flywheel vs. Feedback Grid: Convert trolling/comments/insults into tactical action points</li>
+                            <li>Battle Board: Visualize your next 3 flywheel launches and who fuels them</li>
+                        </ul>
+                        <p class="mt-4 text-gray-700 font-bold">Real Case Study:</p>
+                        <p class="text-gray-600">Cristiano Ronaldo — Booed, doubted, insulted at multiple stages. Public humiliation = fastest catalyst for Fuel → Forge → Fly.</p>
+                    </div>
 
-<!-- LLM Integration: Image-Based Solution Generator -->
-<div class="max-w-4xl mx-auto mt-16 p-6 secondary-bg rounded-lg shadow-xl border border-gray-200">
-<h3 class="font-bold text-xl md:text-2xl mb-4 accent-color text-center">Visualize Your Flywheel Solution 🖼️</h3>
-<p class="mb-4 text-gray-700 text-center">Describe a challenge or breakthrough related to The Failure Flywheel. The AI will generate a symbolic image representing its transformation.</p>
-<textarea id="image-prompt-input" class="w-full p-3 border border-gray-300 rounded-md focus:ring-accent-color focus:border-accent-color resize-y min-h-[100px]" placeholder="E.g., 'A personal setback transforming into powerful forward motion.' or 'Channeling frustration into creative energy.'"></textarea>
-<button id="generate-image-button" class="mt-4 w-full accent-bg text-f8f7f2 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center justify-center">
-<span id="image-button-text">Generate Visual Solution!</span>
-<div id="image-loading" class="loading-spinner hidden ml-3"></div>
-</button>
-<div id="image-solution-container" class="image-solution-container mt-6 hidden">
-<img id="generated-image" src="" alt="Generated Visual Solution" class="rounded-md">
-<p id="image-error-text" class="text-red-600 hidden p-4">Could not generate image. Please try again or refine your prompt.</p>
-</div>
-</div>
-</div>
-</section>
-</main>
+                    <!-- Becoming a Flywheel Being -->
+                    <div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
+                        <h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">Part V, Chapter 5: Becoming a Flywheel Being</h3>
+                        <p class="mb-4 text-gray-700">No more waiting for big wins. No longer scared of small losses. Living in a loop of eternal action, built from inner thermodynamics.</p>
+                        <h4 class="font-bold text-lg mb-2">Practices:</h4>
+                        <ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
+                            <li>Daily Micro-Fall Logs: Fail something deliberately daily</li>
+                            <li>Weekly Flywheel Review Rituals (Use Notion, journal, or app)</li>
+                            <li>Monthly Loop Stack Review — What version of you is emerging?</li>
+                        </ul>
+                        <p class="mt-4 font-bold text-gray-700">Identity Evolution Quotient (IEQ) = (Flywheel Completions ÷ Time) × Clarity of Direction</p>
+                        <p class="mt-4 text-gray-700 font-bold">Real Case Study:</p>
+                        <p class="text-gray-600">Robert Downey Jr. — From rock bottom (drug arrests) to Iron Man. Each loop made him sharper, more in control of his identity, and finally irreplaceable.</p>
+                    </div>
 
-<footer class="py-8 border-t border-gray-200">
-<div class="container mx-auto px-6 text-center text-gray-500">
-<p>&copy; 2025 The Failure Code. An interactive exploration.</p>
-</div>
-</footer>
+                    <p class="mt-8 text-center text-gray-700 font-bold text-lg">"Don’t wait for the wheel of fortune. Build the flywheel of failure. That’s the only engine that never stops evolving you."</p>
+                </div>
+
+                <!-- LLM Integration: Strategic Mind Map Generator -->
+                <div class="max-w-4xl mx-auto mt-16 p-6 secondary-bg rounded-lg shadow-xl border border-gray-200">
+                    <h3 class="font-bold text-xl md:text-2xl mb-4 accent-color text-center">Generate Strategic Mind Map 📝</h3>
+                    <p class="mb-4 text-gray-700 text-center">Describe a challenge or goal. The AI will generate a structured "mind map" outline based on The Failure Code principles (Fall, Feel, Frame, Fuel, Forge, Fly, Feedback) to help you build momentum. The output will use text formatting to resemble a mind map structure.</p>
+                    <p class="mb-4 text-gray-500 text-sm italic text-center">
+                        Note: This is a **text-based visualization** designed to structure complex ideas hierarchically,
+                        using indentation and ASCII characters to mimic a mind map.
+                        It is not a graphical drawing tool.
+                    </p>
+                    <textarea id="mind-map-prompt-input" class="w-full p-3 border border-gray-300 rounded-md focus:ring-accent-color focus:border-accent-color resize-y min-h-[100px]" placeholder="E.g., 'How to recover from a major career setback and launch a new venture?' or 'Managing creative block and channeling it into innovative ideas.'"></textarea>
+                    <button id="generate-mind-map-button" class="mt-4 w-full accent-bg text-f8f7f2 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center justify-center">
+                        <span id="mind-map-button-text">Generate Mind Map!</span>
+                        <div id="mind-map-loading" class="loading-spinner hidden ml-3"></div>
+                    </button>
+                    <div id="mind-map-output" class="mt-6 p-4 bg-gray-50 rounded-md border border-gray-200 text-gray-800 hidden mind-map-output">
+                        <h4 class="font-bold mb-2">AI's Strategic Mind Map:</h4>
+                        <pre id="ai-mind-map-text" class="text-sm"></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="py-8 border-t border-gray-200">
+        <div class="container mx-auto px-6 text-center text-gray-500">
+            <p>&copy; 2025 The Failure Code. An interactive exploration.</p>
+        </div>
+    </footer>
 
 
-<script>
-const failureCodeData = {
-arsenal: {
-failure: {
-title: "Decoding Failure – The Unseen Blueprint",
-key: "failure",
-chapters: [
-{ num: 1, title: "The Myth of Absolute Failure", desc: "Redefining what failure truly is." },
-{ num: 2, title: "The Data Stream of Defeat", desc: "How every setback provides critical information." },
-{ num: 3, title: "Identifying Your Failure Archetypes", desc: "Understanding common patterns of personal and professional collapse." },
-{ num: 4, title: "The Inverse Principle", desc: "Discovering the hidden advantages in every disadvantage." },
-{ num: 5, title: "Building Your Failure Inventory", desc: "A practical framework for cataloging and analyzing past failures." }
-]
-},
-rage: {
-title: "The Crucible of Rage – Forging Indestructible Drive",
-key: "rage",
-chapters: [
-{ num: 6, title: "Understanding the Energy of Anger", desc: "Beyond destructive, how rage is raw power." },
-{ num: 7, title: "The Productive Inferno", desc: "Channeling frustration into focused action." },
-{ num: 8, title: "Strategic Indignation", desc: "When and how to ethically leverage anger for change." },
-{ num: 9, title: "The Adversary's Fuel", desc: "Using rivals and critics to ignite your ambition." },
-{ num: 10, title: "From Burnout to Breakthrough", desc: "Sustaining intensity without self-destruction." }
-]
-},
-resistance: {
-title: "Resistance as Leverage – The Force Multiplier",
-key: "resistance",
-chapters: [
-{ num: 11, title: "The Laws of Opposition", desc: "Why resistance is inevitable and necessary." },
-{ num: 12, title: "The Friction Advantage", desc: "How obstacles create strength and clarity." },
-{ num: 13, title: "Navigating the Wall", desc: "Tactics for overcoming internal and external resistance." },
-{ num: 14, title: "The Art of the Counter-Flow", desc: "Using opponents' momentum against them." },
-{ num: 15, title: "Embracing the Gauntlet", desc: "Seeking out challenges to accelerate growth." }
-]
-}
-},
-playbook: [
-{ title: "Blueprinting the Bounce-Back", desc: "Step-by-step recovery and re-engagement." },
-{ title: "Precision Strikes", desc: "Applying lessons from failure to new opportunities." },
-{ title: "The Art of the Calculated Risk", desc: "Leveraging 'fast failing' for rapid learning and adaptation." },
-{ title: "Orchestrating the Offensive", desc: "Turning defensive positions into strategic attacks." },
-{ title: "Collective Weaponization", desc: "Applying the code to teams and organizations." },
-{ title: "The Ethics of Advantage", desc: "Responsible and powerful application of the code." }
-],
-mindset: [
-{ title: "The Psychology of the Unbreakable", desc: "Rewiring your brain for extreme adversity." },
-{ title: "Cognitive Warfare", desc: "Challenging self-limiting beliefs and doubt." },
-{ title: "Emotional Armor", desc: "Developing detachment without losing passion." },
-{ title: "The Feedback Loop of Grit", desc: "How to sustain effort through repeated setbacks." },
-{ title: "Identity of the Victor", desc: "Building a self-concept immune to defeat." },
-{ title: "The Ripple Effect of Resilience", desc: "Inspiring others through your transformed approach." },
-{ title: "Sustainable Victory", desc: "Ensuring long-term success without complacency." }
-]
-};
+    <script>
+        const failureCodeData = {
+            arsenal: {
+                failure: {
+                    title: "Decoding Failure – The Unseen Blueprint",
+                    key: "failure",
+                    chapters: [
+                        { num: 1, title: "The Myth of Absolute Failure", desc: "Redefining what failure truly is." },
+                        { num: 2, title: "The Data Stream of Defeat", desc: "How every setback provides critical information." },
+                        { num: 3, title: "Identifying Your Failure Archetypes", desc: "Understanding common patterns of personal and professional collapse." },
+                        { num: 4, title: "The Inverse Principle", desc: "Discovering the hidden advantages in every disadvantage." },
+                        { num: 5, title: "Building Your Failure Inventory", desc: "A practical framework for cataloging and analyzing past failures." }
+                    ]
+                },
+                rage: {
+                    title: "The Crucible of Rage – Forging Indestructible Drive",
+                    key: "rage",
+                    chapters: [
+                        { num: 6, title: "Understanding the Energy of Anger", desc: "Beyond destructive, how rage is raw power." },
+                        { num: 7, title: "The Productive Inferno", desc: "Channeling frustration into focused action." },
+                        { num: 8, title: "Strategic Indignation", desc: "When and how to ethically leverage anger for change." },
+                        { num: 9, title: "The Adversary's Fuel", desc: "Using rivals and critics to ignite your ambition." },
+                        { num: 10, title: "From Burnout to Breakthrough", desc: "Sustaining intensity without self-destruction." }
+                    ]
+                },
+                resistance: {
+                    title: "Resistance as Leverage – The Force Multiplier",
+                    key: "resistance",
+                    chapters: [
+                        { num: 11, title: "The Laws of Opposition", desc: "Why resistance is inevitable and necessary." },
+                        { num: 12, "title": "The Friction Advantage", desc: "How obstacles create strength and clarity." },
+                        { num: 13, title: "Navigating the Wall", desc: "Tactics for overcoming internal and external resistance." },
+                        { num: 14, title: "The Art of the Counter-Flow", desc: "Using opponents' momentum against them." },
+                        { num: 15, title: "Embracing the Gauntlet", desc: "Seeking out challenges to accelerate growth." }
+                    ]
+                }
+            },
+            playbook: [
+                { title: "Blueprinting the Bounce-Back", desc: "Step-by-step recovery and re-engagement." },
+                { title: "Precision Strikes", desc: "Applying lessons from failure to new opportunities." },
+                { title: "The Art of the Calculated Risk", desc: "Leveraging 'fast failing' for rapid learning and adaptation." },
+                { title: "Orchestrating the Offensive", "desc": "Turning defensive positions into strategic attacks." },
+                { title: "Collective Weaponization", desc: "Applying the code to teams and organizations." },
+                { title: "The Ethics of Advantage", desc: "Responsible and powerful application of the code." }
+            ],
+            mindset: [
+                { title: "The Psychology of the Unbreakable", desc: "Rewiring your brain for extreme adversity." },
+                { title: "Cognitive Warfare", desc: "Challenging self-limiting beliefs and doubt." },
+                { title: "Emotional Armor", desc: "Developing detachment without losing passion." },
+                { title: "The Feedback Loop of Grit", desc: "How to sustain effort through repeated setbacks." },
+                { title: "Identity of the Victor", desc: "Building a self-concept immune to defeat." },
+                { title: "The Ripple Effect of Resilience", desc: "Inspiring others through your transformed approach." },
+                { title: "Sustainable Victory", desc: "Ensuring long-term success without complacency." }
+            ]
+        };
 
-const radarCtx = document.getElementById('failureCodeRadar').getContext('2d');
-const radarChart = new Chart(radarCtx, {
-type: 'radar',
-data: {
-labels: ['Decode Failure', 'Harness Rage', 'Leverage Resistance', 'Forge Mindset', 'Apply Tactics'],
-datasets: [{
-label: 'Core Principles',
-data: [5, 5, 5, 5, 5],
-fill: true,
-backgroundColor: 'rgba(164, 14, 76, 0.2)',
-borderColor: '#A40E4C',
-pointBackgroundColor: '#A40E4C',
-pointBorderColor: '#fff',
-pointHoverBackgroundColor: '#fff',
-pointHoverBorderColor: '#A40E4C'
-}]
-},
-options: {
-maintainAspectRatio: false,
-elements: {
-line: {
-borderWidth: 2
-}
-},
-scales: {
-r: {
-angleLines: {
-color: 'rgba(44, 58, 71, 0.2)'
-},
-grid: {
-color: 'rgba(44, 58, 71, 0.2)'
-},
-pointLabels: {
-font: {
-size: 14,
-weight: 'bold'
-},
-color: '#2C3A47'
-},
-ticks: {
-display: false,
-stepSize: 1
-},
-suggestedMin: 0,
-suggestedMax: 5,
-}
-},
-plugins: {
-legend: {
-display: false
-},
-tooltip: {
-enabled: false
-}
-},
-onClick: (e) => {
-const activePoints = radarChart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
-if (activePoints.length) {
-const { index } = activePoints[0];
-const sectionMap = ['#arsenal', '#arsenal', '#arsenal', '#mindset', '#playbook'];
-const targetSection = document.querySelector(sectionMap[index]);
-if(targetSection) {
-targetSection.scrollIntoView({ behavior: 'smooth' });
-if (index <= 2) {
-const tabMap = ['failure', 'rage', 'resistance'];
-document.getElementById(`tab-${tabMap[index]}`).click();
-}
-}
-}
-}
-}
-});
+        const coursesData = [
+            {
+                id: "course1",
+                title: "Course 1: The Blueprint for Bounce-Back",
+                description: "Learn to systematically dissect failures, reframe adversity, and extract invaluable data to propel your next moves.",
+                price: 299, // INR
+                modules: [
+                    { title: "Module 1.1: Understanding the Anatomy of a Setback", content: "This module breaks down common failure patterns and helps you identify the core components of your setbacks." },
+                    { title: "Module 1.2: Reframing Adversity: From Crisis to Catalyst", content: "Discover techniques to shift your perspective on challenges, turning perceived crises into powerful opportunities for growth." },
+                    { title: "Module 1.3: The Data-Driven Debrief: Extracting Lessons", content: `
+                        <p>Every failure is a data point. Learn how to conduct a thorough debrief to extract maximum insights.</p>
+                        <p class="mt-2 mb-2">Download the companion PDF worksheet:</p>
+                        <a href="https://www.africau.edu/images/default/sample.pdf" target="_blank" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-200">
+                            Download Module Worksheet (PDF)
+                        </a>
+                        <p class="mt-4 text-gray-500 text-sm">Note: This is a sample PDF link for demonstration. Replace it with your actual PDF URL.</p>
+                    ` }
+                ]
+            },
+            {
+                id: "course2",
+                title: "Course 2: Ignition: Harnessing Inner Fire",
+                description: "Transform negative emotions like rage and frustration into a powerful, relentless drive that fuels your ambition and execution.",
+                price: 299, // INR
+                modules: [
+                    { title: "Module 2.1: Emotional Intelligence in Adversity: Acknowledging the Burn", content: "Explore how to recognize and acknowledge intense emotions without letting them consume you. Understand the raw energy they contain." },
+                    { title: "Module 2.2: Transforming Rage into Relentless Execution", content: "Practical strategies for channeling frustration and anger into focused, productive action. Turn your 'burn' into fuel." },
+                    { title: "Module 2.3: Cultivating Unstoppable Drive: Fueling Your Ambition", content: `
+                        <p>Learn to sustain your newly harnessed drive over the long term. This module covers maintaining momentum and preventing burnout.</p>
+                        <p class="mt-2 mb-2">Watch the introductory video for this module:</p>
+                        <div class="video-container">
+                           <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        </div>
+                        <p class="mt-4 text-gray-500 text-sm">Note: This is a sample YouTube embed for demonstration. Replace it with your actual video embed code from YouTube, Vimeo, etc.</p>
+                    ` }
+                ]
+            },
+            {
+                id: "course3",
+                title: "Course 3: Strategic Resistance & Flow",
+                description: "Master the art of identifying, navigating, and leveraging internal and external resistance to create unstoppable momentum.",
+                price: 299, // INR
+                modules: [
+                    { title: "Module 3.1: Identifying External & Internal Resistance", content: "Distinguish between the obstacles imposed by the outside world and the self-sabotage that comes from within." },
+                    { title: "Module 3.2: The Art of Counter-Flow: Using Opposition as Leverage", content: "Discover how to analyze resistance and strategically pivot or push through, often using the very force against you as a propellant." },
+                    { title: "Module 3.3: Building Momentum: From Strategy to Breakthrough", content: "Integrate your understanding of resistance into your broader strategy to build consistent, unbreakable momentum towards your goals." }
+                ]
+            }
+        ];
 
-const arsenalContentEl = document.getElementById('arsenal-content');
-const tabButtons = {
-failure: document.getElementById('tab-failure'),
-rage: document.getElementById('tab-rage'),
-resistance: document.getElementById('tab-resistance')
-};
-let currentActiveTab = 'failure';
 
-function renderArsenalContent(type) {
-currentActiveTab = type;
-const data = failureCodeData.arsenal[type];
-let html = `<div class="secondary-bg p-6 rounded-lg shadow-inner border border-gray-200">
-<h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">${data.title}</h3>
-<div class="space-y-2">`;
+        const radarCtx = document.getElementById('failureCodeRadar').getContext('2d');
+        const radarChart = new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Decode Failure', 'Harness Rage', 'Leverage Resistance', 'Forge Mindset', 'Apply Tactics'],
+                datasets: [{
+                    label: 'Core Principles',
+                    data: [5, 5, 5, 5, 5],
+                    fill: true,
+                    backgroundColor: 'rgba(164, 14, 76, 0.2)',
+                    borderColor: '#A40E4C',
+                    pointBackgroundColor: '#A40E4C',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#A40E4C'
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                elements: {
+                    line: {
+                        borderWidth: 2
+                    }
+                },
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: 'rgba(44, 58, 71, 0.2)'
+                        },
+                        grid: {
+                            color: 'rgba(44, 58, 71, 0.2)'
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            color: '#1A202C' /* Updated to match new primary text color */
+                        },
+                        ticks: {
+                            display: false,
+                            stepSize: 1
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 5,
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                onClick: (e) => {
+                    const activePoints = radarChart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+                    if (activePoints.length) {
+                        const { index } = activePoints[0];
+                        const sectionMap = ['#arsenal', '#arsenal', '#arsenal', '#mindset', '#playbook'];
+                        const targetSection = document.querySelector(sectionMap[index]);
+                        if(targetSection) {
+                            targetSection.scrollIntoView({ behavior: 'smooth' });
+                            if (index <= 2) {
+                                const tabMap = ['failure', 'rage', 'resistance'];
+                                document.getElementById(`tab-${tabMap[index]}`).click();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        const arsenalContentEl = document.getElementById('arsenal-content');
+        const tabButtons = {
+            failure: document.getElementById('tab-failure'),
+            rage: document.getElementById('tab-rage'),
+            resistance: document.getElementById('tab-resistance')
+        };
+        let currentActiveTab = 'failure';
 
-data.chapters.forEach(chapter => {
-html += `
-<div class="accordion-item border-b border-gray-200 py-2">
-<button class="accordion-header w-full text-left flex justify-between items-center py-2">
-<span class="font-semibold text-md md:text-lg"><span class="accent-color font-bold mr-2">${chapter.num}.</span>${chapter.title}</span>
-<span class="accordion-icon text-xl accent-color font-bold">+</span>
-</button>
-<div class="accordion-content">
-<p class="pt-2 pb-2 pl-6 text-gray-600">${chapter.desc}</p>
-</div>
-</div>`;
-});
-html += `</div></div>`;
-arsenalContentEl.innerHTML = html;
-addAccordionListeners();
-}
+        function renderArsenalContent(type) {
+            currentActiveTab = type;
+            const data = failureCodeData.arsenal[type];
+            let html = `<div class="secondary-bg p-6 rounded-lg shadow-inner border border-gray-200">
+                            <h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">${data.title}</h3>
+                            <!-- Image specific to the active tab -->
+                            <img src="https://placehold.co/400x200/${type === 'failure' ? 'A40E4C' : type === 'rage' ? 'A40E4C' : 'A40E4C'}/F8F7F2?text=${type.toUpperCase()}+CONCEPT" alt="${type} Concept" class="w-full max-w-sm mx-auto rounded-md shadow-lg mb-8">
+                            <div class="space-y-2">`;
 
-Object.keys(tabButtons).forEach(key => {
-tabButtons[key].addEventListener('click', () => {
-Object.values(tabButtons).forEach(btn => btn.classList.remove('active'));
-tabButtons[key].classList.add('active');
-renderArsenalContent(key);
-});
-});
+            data.chapters.forEach(chapter => {
+                html += `
+                    <div class="accordion-item border-b border-gray-200 py-2">
+                        <button class="accordion-header w-full text-left flex justify-between items-center py-2">
+                            <span class="font-semibold text-md md:text-lg"><span class="accent-color font-bold mr-2">${chapter.num}.</span>${chapter.title}</span>
+                            <span class="accordion-icon text-xl accent-color font-bold">+</span>
+                        </button>
+                        <div class="accordion-content">
+                             <p class="pt-2 pb-2 pl-6 text-gray-600">${chapter.desc}</p>
+                        </div>
+                    </div>`;
+            });
+            html += `</div></div>`;
+            arsenalContentEl.innerHTML = html;
+            addAccordionListeners();
+        }
 
-function addAccordionListeners() {
-const accordionHeaders = document.querySelectorAll('.accordion-header');
-accordionHeaders.forEach(header => {
-header.addEventListener('click', () => {
-const content = header.nextElementSibling;
-const icon = header.querySelector('.accordion-icon');
+        // Function to handle course purchase (now using custom modal)
+        function purchaseCourse(courseId, courseTitle, price) {
+            // Using window.confirm to trigger the custom modal for confirmation
+            window.confirm(`Confirm purchase of "${courseTitle}" for INR ${price}?`).then(confirmed => {
+                if (confirmed) {
+                    window.alert(`Purchase initiated for "${courseTitle}"! (Course ID: ${courseId}). In a real app, this would redirect to a payment page.`);
+                    // Here, you would typically redirect to a payment gateway or call a backend API
+                    // window.location.href = `/checkout?course_id=${courseId}&amount=${price}`;
+                }
+            });
+        }
 
-if (content.style.maxHeight) {
-content.style.maxHeight = null;
-content.style.paddingTop = null;
-icon.textContent = '+';
-} else {
-document.querySelectorAll('.accordion-content').forEach(item => {
-item.style.maxHeight = null;
-item.style.paddingTop = null;
-item.previousElementSibling.querySelector('.accordion-icon').textContent = '+';
-});
-content.style.maxHeight = content.scrollHeight + "px";
-content.style.paddingTop = '0.5rem';
-icon.textContent = '−';
-}
-});
-});
-}
 
-const playbookContainer = document.querySelector('#playbook .grid');
-let playbookHTML = '';
-failureCodeData.playbook.forEach(item => {
-playbookHTML += `
-<div class="secondary-bg rounded-lg shadow-lg p-6 border border-gray-200 transform hover:-translate-y-2 transition-transform duration-300">
-<h4 class="font-bold text-xl mb-2 accent-color">${item.title}</h4>
-<p class="text-gray-600">${item.desc}</p>
-</div>
-`;
-});
-playbookContainer.innerHTML = playbookHTML;
+        function renderCoursesContent() {
+            const coursesContentEl = document.getElementById('courses-content');
+            let html = '';
+            coursesData.forEach(course => {
+                html += `
+                    <div class="secondary-bg p-6 rounded-lg shadow-inner border border-gray-200">
+                        <h3 class="font-bold text-xl md:text-2xl mb-4 accent-color">${course.title}</h3>
+                        <p class="mb-4 text-gray-700">${course.description}</p>
+                        <button onclick="purchaseCourse('${course.id}', '${course.title}', ${course.price})" class="course-buy-button">
+                            Buy for INR ${course.price}
+                        </button>
+                        <div class="space-y-2 mt-6">`;
+                course.modules.forEach((module, index) => {
+                    // Use a unique ID for each module's content for more precise targeting if needed
+                    const moduleId = `${course.id}-module-${index}`; 
+                    html += `
+                            <div class="accordion-item border-b border-gray-200 py-2">
+                                <button class="accordion-header w-full text-left flex justify-between items-center py-2">
+                                    <span class="font-semibold text-md md:text-lg">${module.title}</span>
+                                    <span class="accordion-icon text-xl accent-color font-bold">+</span>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="pt-2 pb-2 pl-6 text-gray-600">${module.content}</div>
+                                </div>
+                            </div>`;
+                });
+                html += `</div></div>`;
+            });
+            coursesContentEl.innerHTML = html;
+            addAccordionListeners(); // Re-use existing accordion logic
+        }
 
-const mindsetContainer = document.querySelector('#mindset .space-y-8');
-let mindsetHTML = '';
-failureCodeData.mindset.forEach(item => {
-mindsetHTML += `
-<div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
-<h4 class="font-bold text-xl mb-2">${item.title}</h4>
-<p class="text-gray-600">${item.desc}</p>
-</div>
-`;
-});
-mindsetContainer.innerHTML = mindsetHTML;
+        Object.keys(tabButtons).forEach(key => {
+            tabButtons[key].addEventListener('click', () => {
+                Object.values(tabButtons).forEach(btn => btn.classList.remove('active'));
+                tabButtons[key].classList.add('active');
+                renderArsenalContent(key);
+            });
+        });
 
-document.addEventListener('DOMContentLoaded', () => {
-tabButtons.failure.click();
-});
+        function addAccordionListeners() {
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const icon = header.querySelector('.accordion-icon');
+                    
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        content.style.paddingTop = null;
+                        icon.textContent = '+';
+                    } else {
+                        document.querySelectorAll('.accordion-content').forEach(item => {
+                            item.style.maxHeight = null;
+                            item.style.paddingTop = null;
+                            item.previousElementSibling.querySelector('.accordion-icon').textContent = '+';
+                        });
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        content.style.paddingTop = '0.5rem';
+                        icon.textContent = '−';
+                    }
+                });
+            });
+        }
+        
+        const playbookContainer = document.querySelector('#playbook .grid');
+        let playbookHTML = '';
+        failureCodeData.playbook.forEach(item => {
+            playbookHTML += `
+                <div class="secondary-bg rounded-lg shadow-lg p-6 border border-gray-200 transform hover:-translate-y-2 transition-transform duration-300">
+                    <h4 class="font-bold text-xl mb-2 accent-color">${item.title}</h4>
+                    <p class="text-gray-600">${item.desc}</p>
+                </div>
+            `;
+        });
+        playbookContainer.innerHTML = playbookHTML;
 
-const mobileMenuButton = document.getElementById('mobile-menu-button');
-const mobileMenu = document.getElementById('mobile-menu');
-mobileMenuButton.addEventListener('click', () => {
-mobileMenu.classList.toggle('hidden');
-});
-document.querySelectorAll('#mobile-menu a').forEach(link => {
-link.addEventListener('click', () => {
-mobileMenu.classList.add('hidden');
-});
-});
+        const mindsetContainer = document.querySelector('#mindset .space-y-8');
+        let mindsetHTML = '';
+        failureCodeData.mindset.forEach(item => {
+            mindsetHTML += `
+                <div class="secondary-bg rounded-lg shadow p-6 border border-gray-200">
+                    <h4 class="font-bold text-xl mb-2">${item.title}</h4>
+                    <p class="text-gray-600">${item.desc}</p>
+                </div>
+            `;
+        });
+        mindsetContainer.innerHTML = mindsetHTML;
 
-const problemInput = document.getElementById('problem-input');
-const weaponizeButton = document.getElementById('weaponize-button');
-const weaponizeText = document.getElementById('weaponize-text');
-const weaponizeLoading = document.getElementById('weaponize-loading');
-const weaponizeOutput = document.getElementById('weaponize-output');
-const aiResponseText = document.getElementById('ai-response-text');
+        document.addEventListener('DOMContentLoaded', () => {
+            tabButtons.failure.click();
+            renderCoursesContent(); // Render courses content on load
+        });
 
-weaponizeButton.addEventListener('click', async () => {
-const userProblem = problemInput.value.trim();
-if (!userProblem) {
-aiResponseText.textContent = 'Please describe your problem to weaponize it!';
-weaponizeOutput.classList.remove('hidden');
-return;
-}
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
 
-weaponizeText.textContent = 'Weaponizing...';
-weaponizeLoading.classList.remove('hidden');
-weaponizeButton.disabled = true;
-weaponizeOutput.classList.add('hidden');
-aiResponseText.textContent = '';
+        const problemInput = document.getElementById('problem-input');
+        const weaponizeButton = document.getElementById('weaponize-button');
+        const weaponizeText = document = document.getElementById('weaponize-text');
+        const weaponizeLoading = document.getElementById('weaponize-loading');
+        const weaponizeOutput = document.getElementById('weaponize-output');
+        const aiResponseText = document.getElementById('ai-response-text');
 
-let promptContext = "";
-switch (currentActiveTab) {
-case 'failure':
-promptContext = "analyze the following situation of failure and suggest how it can be 'weaponized' for an advantage, focusing on the principles of decoding failure:";
-break;
-case 'rage':
-promptContext = "analyze the following situation causing rage and suggest how this 'rage' can be channeled and 'weaponized' into productive, unstoppable drive:";
-break;
-case 'resistance':
-promptContext = "analyze the following situation of resistance and suggest how this 'resistance' can be leveraged and 'weaponized' as a force multiplier to achieve a win:";
-break;
-}
+        weaponizeButton.addEventListener('click', async () => {
+            const userProblem = problemInput.value.trim();
+            if (!userProblem) {
+                // IMPORTANT: Replaced alert with custom modal message as per instructions
+                displayMessageModal('Please describe your problem to weaponize it!');
+                weaponizeOutput.classList.remove('hidden');
+                return;
+            }
 
-const prompt = `As an expert on 'The Failure Code: How to Weaponize Failure, Rage, and Resistance to Win,' please ${promptContext} \n\nUser's Problem: "${userProblem}"`;
+            weaponizeText.textContent = 'Weaponizing...';
+            weaponizeLoading.classList.remove('hidden');
+            weaponizeButton.disabled = true;
+            weaponizeOutput.classList.add('hidden');
+            aiResponseText.textContent = '';
 
-let chatHistory = [];
-chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-const payload = { contents: chatHistory };
-const apiKey = "";
-const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            let promptContext = "";
+            switch (currentActiveTab) {
+                case 'failure':
+                    promptContext = "analyze the following situation of failure and suggest how it can be 'weaponized' for an advantage, focusing on the principles of decoding failure:";
+                    break;
+                case 'rage':
+                    promptContext = "analyze the following situation causing rage and suggest how this 'rage' can be channeled and 'weaponized' into productive, unstoppable drive:";
+                    break;
+                case 'resistance':
+                    promptContext = "analyze the following situation of resistance and suggest how this 'resistance' can be leveraged and 'weaponized' as a force multiplier to achieve a win:";
+                    break;
+            }
 
-try {
-const response = await fetch(apiUrl, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload)
-});
-const result = await response.json();
-if (result.candidates && result.candidates.length > 0 &&
-result.candidates[0].content && result.candidates[0].content.parts &&
-result.candidates[0].content.parts.length > 0) {
-const text = result.candidates[0].content.parts[0].text;
-aiResponseText.textContent = text;
-} else {
-aiResponseText.textContent = 'Sorry, I could not generate a response. Please try again.';
-}
-} catch (error) {
-aiResponseText.textContent = 'An error occurred while connecting to the AI. Please try again later.';
-} finally {
-weaponizeText.textContent = 'Weaponize It!';
-weaponizeLoading.classList.add('hidden');
-weaponizeButton.disabled = false;
-weaponizeOutput.classList.remove('hidden');
-}
-});
+            // Updated prompt for structured, bulleted response
+            const prompt = `As an expert on 'The Failure Code: How to Weaponize Failure, Rage, and Resistance to Win,' ${promptContext}\n\nUser's Problem: "${userProblem}"\n\nProvide the response in a structured, clear format, starting with a brief introductory sentence, then listing actionable insights as bullet points. Each bullet point should be concise and direct.`;
 
-const tacticalChallengeInput = document.getElementById('tactical-challenge-input');
-const generateInsightButton = document.getElementById('generate-insight-button');
-const insightText = document.getElementById('insight-text');
-const insightLoading = document.getElementById('insight-loading');
-const insightOutput = document.getElementById('insight-output');
-const aiInsightText = document.getElementById('ai-insight-text');
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
-generateInsightButton.addEventListener('click', async () => {
-const userChallenge = tacticalChallengeInput.value.trim();
-if (!userChallenge) {
-aiInsightText.textContent = 'Please describe your challenge or goal to generate an insight!';
-insightOutput.classList.remove('hidden');
-return;
-}
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    aiResponseText.textContent = text; // Now assigned to a <pre> tag
+                } else {
+                    aiResponseText.textContent = 'Sorry, I could not generate a response. Please try again.';
+                }
+            } catch (error) {
+                aiResponseText.textContent = 'An error occurred while connecting to the AI. Please try again later.';
+            } finally {
+                weaponizeText.textContent = 'Weaponize It!';
+                weaponizeLoading.classList.add('hidden');
+                weaponizeButton.disabled = false;
+                weaponizeOutput.classList.remove('hidden');
+            }
+        });
 
-insightText.textContent = 'Generating...';
-insightLoading.classList.remove('hidden');
-generateInsightButton.disabled = true;
-insightOutput.classList.add('hidden');
-aiInsightText.textContent = '';
+        const tacticalChallengeInput = document.getElementById('tactical-challenge-input');
+        const generateInsightButton = document.getElementById('generate-insight-button');
+        const insightText = document.getElementById('insight-text');
+        const insightLoading = document.getElementById('insight-loading');
+        const insightOutput = document.getElementById('insight-output');
+        const aiInsightText = document.getElementById('ai-insight-text');
 
-const prompt = `As an expert on 'The Failure Code: How to Weaponize Failure, Rage, and Resistance to Win,' provide a concise, actionable tactical insight or a mini-case study for the following challenge/goal, demonstrating how its principles (weaponizing failure, rage, or resistance) can be applied:\n\nChallenge/Goal: "${userChallenge}"`;
+        generateInsightButton.addEventListener('click', async () => {
+            const userChallenge = tacticalChallengeInput.value.trim();
+            if (!userChallenge) {
+                // IMPORTANT: Replaced alert with custom modal message as per instructions
+                displayMessageModal('Please describe your challenge or goal to generate an insight!');
+                insightOutput.classList.remove('hidden');
+                return;
+            }
 
-let chatHistory = [];
-chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-const payload = { contents: chatHistory };
-const apiKey = "";
-const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            insightText.textContent = 'Generating...';
+            insightLoading.classList.remove('hidden');
+            generateInsightButton.disabled = true;
+            insightOutput.classList.add('hidden');
+            aiInsightText.textContent = '';
 
-try {
-const response = await fetch(apiUrl, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload)
-});
-const result = await response.json();
-if (result.candidates && result.candidates.length > 0 &&
-result.candidates[0].content && result.candidates[0].content.parts &&
-result.candidates[0].content.parts.length > 0) {
-const text = result.candidates[0].content.parts[0].text;
-aiInsightText.textContent = text;
-} else {
-aiInsightText.textContent = 'Sorry, I could not generate an insight. Please try again.';
-}
-} catch (error) {
-aiInsightText.textContent = 'An error occurred while connecting to the AI. Please try again later.';
-} finally {
-insightText.textContent = 'Generate Insight!';
-insightLoading.classList.add('hidden');
-generateInsightButton.disabled = false;
-insightOutput.classList.remove('hidden');
-}
-});
+            const prompt = `As an expert on 'The Failure Code: How to Weaponize Failure, Rage, and Resistance to Win,' provide a concise, actionable tactical insight or a mini-case study for the following challenge/goal, demonstrating how its principles (weaponizing failure, rage, or resistance) can be applied:\n\nChallenge/Goal: "${userChallenge}"`;
 
-// Gemini API Integration - Image-Based Solution Generator (Flywheel Section)
-const imagePromptInput = document.getElementById('image-prompt-input');
-const generateImageButton = document.getElementById('generate-image-button');
-const imageButtonText = document.getElementById('image-button-text');
-const imageLoading = document.getElementById('image-loading');
-const generatedImage = document.getElementById('generated-image');
-const imageSolutionContainer = document.getElementById('image-solution-container');
-const imageErrorText = document.getElementById('image-error-text');
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
-generateImageButton.addEventListener('click', async () => {
-const userImagePrompt = imagePromptInput.value.trim();
-if (!userImagePrompt) {
-imageErrorText.textContent = 'Please describe your challenge to generate a visual solution.';
-imageErrorText.classList.remove('hidden');
-imageSolutionContainer.classList.remove('hidden');
-generatedImage.classList.add('hidden');
-return;
-}
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    aiInsightText.textContent = text;
+                } else {
+                    aiInsightText.textContent = 'Sorry, I could not generate an insight. Please try again.';
+                }
+            } catch (error) {
+                aiInsightText.textContent = 'An error occurred while connecting to the AI. Please try again later.';
+            } finally {
+                insightText.textContent = 'Generate Insight!';
+                insightLoading.classList.add('hidden');
+                generateInsightButton.disabled = false;
+                insightOutput.classList.remove('hidden');
+            }
+        });
 
-imageButtonText.textContent = 'Generating...';
-imageLoading.classList.remove('hidden');
-generateImageButton.disabled = true;
-imageSolutionContainer.classList.add('hidden');
-generatedImage.src = '';
-imageErrorText.classList.add('hidden');
+        const mindMapPromptInput = document.getElementById('mind-map-prompt-input');
+        const generateMindMapButton = document.getElementById('generate-mind-map-button');
+        const mindMapButtonText = document.getElementById('mind-map-button-text');
+        const mindMapLoading = document.getElementById('mind-map-loading');
+        const mindMapOutput = document.getElementById('mind-map-output');
+        const aiMindMapText = document.getElementById('ai-mind-map-text');
 
-const prompt = `Create a powerful, abstract, and symbolic image for 'The Failure Code' book. The image should visually represent the concept of transforming a setback or challenge (like: "${userImagePrompt}") into a source of momentum for personal or professional growth, specifically incorporating elements of a continuously turning 'flywheel' that builds power from 'failure,' 'rage,' or 'resistance.' Use dynamic lines, energetic shapes, and colors that convey transformation and strength. Avoid literal depictions; focus on metaphoric imagery. No text in the image.`;
+        generateMindMapButton.addEventListener('click', async () => {
+            const userMindMapPrompt = mindMapPromptInput.value.trim();
+            if (!userMindMapPrompt) {
+                // IMPORTANT: Replaced alert with custom modal message as per instructions
+                displayMessageModal('Please describe your challenge or goal to generate a strategic mind map.');
+                mindMapOutput.classList.remove('hidden');
+                return;
+            }
 
-const payload = { instances: { prompt: prompt }, parameters: { "sampleCount": 1 } };
-const apiKey = "";
-const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+            mindMapButtonText.textContent = 'Generating...';
+            mindMapLoading.classList.remove('hidden');
+            generateMindMapButton.disabled = true;
+            mindMapOutput.classList.add('hidden');
+            aiMindMapText.textContent = '';
 
-try {
-const response = await fetch(apiUrl, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload)
-});
-const result = await response.json();
-if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
-const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-generatedImage.src = imageUrl;
-generatedImage.classList.remove('hidden');
-imageSolutionContainer.classList.remove('hidden');
-} else {
-imageErrorText.textContent = 'Sorry, I could not generate an image. Please try again or refine your prompt.';
-imageErrorText.classList.remove('hidden');
-imageSolutionContainer.classList.remove('hidden');
-}
-} catch (error) {
-imageErrorText.textContent = 'An error occurred while connecting to the AI image generator. Please try again later.';
-imageErrorText.classList.remove('hidden');
-imageSolutionContainer.classList.remove('hidden');
-} finally {
-imageButtonText.textContent = 'Generate Visual Solution!';
-imageLoading.classList.add('hidden');
-generateImageButton.disabled = false;
-}
-});
-</script>
+            const prompt = `Based on 'The Failure Code' principles (Fall, Feel, Frame, Fuel, Forge, Fly, Feedback) and the concept of The Failure Flywheel™, generate a detailed, structured **textual mind map** or outline to address the following challenge/goal:\n\n**Challenge/Goal:** "${userMindMapPrompt}"\n\n**Format the response as a clear, hierarchical outline using ASCII art characters and precise indentation to visually represent a tree structure. Follow this exact format:**\n\n${userMindMapPrompt}\n├── Fall: [Brief Fall Stage Concept related to the challenge]\n│   └── * Specific aspect of the Fall in your challenge\n│   └── * Key data point/observation from this Fall\n├── Feel: [Brief Feel Stage Concept related to the challenge]\n│   └── * Acknowledge the core emotion (e.g., frustration, disappointment)\n│   └── * Action to process emotion without paralysis (e.g., journal, deep breath)\n├── Frame: [Brief Frame Stage Concept related to the challenge]\n│   └── * Reframe perspective (e.g., "This is a learning opportunity")\n│   └── * Analyze for leverage (e.g., What did this revealed?)\n├── Fuel: [Brief Fuel Stage Concept related to the challenge]\n│   └── * Identify the "rage" or redemptive force (e.g., desire to prove critics wrong)\n│   └── * Action to channel this fuel (e.g., set an aggressive goal)\n├── Forge: [Brief Forge Stage Concept related to the challenge]\n│   └── * Action taken using new data (e.g., new strategy, skill acquisition)\n│   └── * Specific step or project initiated\n├── Fly: [Brief Fly Stage Concept related to the challenge]\n│   └── * Visible breakthrough or milestone achieved\n│   └── * Emerging new identity/skillset\n└── Feedback: [Brief Feedback Stage Concept related to the challenge]\n    └── * Reflect on the outcome (e.g., What worked? What didn't?)\n    └── * Calibrate for the next loop (e.g., What's the next mini-fail?)\n\nEnsure each Flywheel stage is a primary branch using \`├──\` (or \`└──\` for the last one) and its sub-points use \`└──\` with correct preceding vertical lines (\`│   \`). Provide concise, actionable insights for each sub-point. **Do not include any introductory or concluding remarks outside the specified format.**`;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    aiMindMapText.textContent = text;
+                } else {
+                    aiMindMapText.textContent = 'Sorry, I could not generate a mind map. Please try again or refine your prompt.';
+                }
+            } catch (error) {
+                aiMindMapText.textContent = 'An error occurred while connecting to the AI. Please try again later.';
+            } finally {
+                mindMapButtonText.textContent = 'Generate Mind Map!';
+                mindMapLoading.classList.add('hidden');
+                generateMindMapButton.disabled = false;
+                mindMapOutput.classList.remove('hidden');
+            }
+        });
+
+        // --- Custom Modal for Messages (replaces alert/confirm) ---
+        // This is a simple modal. For a more robust solution, you might use a library or more complex CSS/JS.
+        const modalHtml = `
+            <div id="custom-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4">
+                    <h3 id="modal-title" class="text-xl font-bold mb-4 accent-color"></h3>
+                    <p id="modal-message" class="text-gray-700 mb-6"></p>
+                    <div class="flex justify-end space-x-3">
+                        <button id="modal-cancel-button" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors hidden">Cancel</button>
+                        <button id="modal-ok-button" class="px-4 py-2 accent-bg text-white rounded-md hover:opacity-90 transition-opacity">OK</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+        const customModal = document.getElementById('custom-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalOkButton = document.getElementById('modal-ok-button');
+        const modalCancelButton = document.getElementById('modal-cancel-button');
+
+        function displayMessageModal(message, title = 'Notification', type = 'alert', onConfirm = null) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            customModal.classList.remove('hidden');
+
+            // Reset buttons visibility
+            modalOkButton.classList.remove('hidden');
+            modalCancelButton.classList.add('hidden');
+
+            modalOkButton.onclick = () => {
+                customModal.classList.add('hidden');
+                if (type === 'confirm' && onConfirm) {
+                    onConfirm(true); // Execute confirm callback with true
+                }
+            };
+
+            if (type === 'confirm') {
+                modalCancelButton.classList.remove('hidden');
+                modalCancelButton.onclick = () => {
+                    customModal.classList.add('hidden');
+                    if (onConfirm) {
+                        onConfirm(false); // Execute confirm callback with false
+                    }
+                };
+            }
+        }
+
+        // Override native alert and confirm to use our custom modal
+        window.alert = displayMessageModal;
+        window.confirm = (message) => new Promise(resolve => displayMessageModal(message, 'Confirm Action', 'confirm', resolve));
+
+        // Re-wired purchaseCourse to use the custom modal
+        window.purchaseCourse = (courseId, courseTitle, price) => {
+            window.confirm(`Confirm purchase of "${courseTitle}" for INR ${price}?`).then(confirmed => {
+                if (confirmed) {
+                    window.alert(`Purchase initiated for "${courseTitle}"! (Course ID: ${courseId}). In a real app, this would redirect to a payment page.`);
+                    // Real payment gateway integration would go here
+                }
+            });
+        };
+
+    </script>
 </body>
 </html>
